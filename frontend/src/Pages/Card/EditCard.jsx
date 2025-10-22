@@ -1,133 +1,166 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux"; // lấy dữ liệu từ Redux
 import { VARIABLE } from "../../Data/variable";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/img/head-gift.svg"
+import logo from "../../assets/img/head-gift.svg";
+import LoveDaysPicker from "../../components/LoveDaysPicker";
+import YouTubePreview from "../../components/YouTubePreview";
 
-const EditProfile = () => {
+// Dựa vào CardLove.js (bản chuẩn):
+// module.exports = mongoose.model("CardLove", {
+//   person_one: String,
+//   person_two: String,
+//   img_person_one: String,
+//   img_person_two: String,
+//   start_date: Date,
+//   url_youtube: String,
+//   // Có thể có thêm các field khác, nhưng đây là các trường chính để tạo card mới
+// });
+
+const CreateCard = () => {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.data); // lấy user từ Redux
-  const token = localStorage.getItem("accessToken");
-  const [formData, setFormData] = useState(null);
-  const [beforeImg, setBeforeImg] = useState("");
-  const [afterImg, setAfterImg] = useState("");
-  const [avatarImg, setAvatarImg] = useState("");
 
+  // Thêm trường day_loved cho formData
+  const [formData, setFormData] = useState({
+    person_one: "",
+    person_two: "",
+    img_person_one: "",
+    img_person_two: "",
+    start_date: "",
+    url_youtube: "",
+    day_loved: 0, // thêm trường day_loved
+  });
 
-  // Khi user từ Redux thay đổi, set vào formData
-  useEffect(() => {
-    if (user) {
-      setFormData(user);
-    }
-  }, [user]);
+  const [imgPersonOneFile, setImgPersonOneFile] = useState(null);
+  const [imgPersonTwoFile, setImgPersonTwoFile] = useState(null);
+
+  // Youtube
+  const handleYoutubeChange = (val) => {
+    setFormData((prev) => ({ ...prev, url_youtube: val }));
+  };
+
+  // Date (from LoveDaysPicker)
+  // Cập nhật ngày yêu và số ngày yêu
+  const handleDateChange = (date, daysLoved) => {
+    setFormData((prev) => ({
+      ...prev,
+      start_date: date,
+      day_loved: daysLoved,
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (files) {
-      const file = files[0];
 
-      // Giới hạn dung lượng 5MB
+    if (files && files[0]) {
+      const file = files[0];
+      // Limit 5MB
       if (file.size > 5 * 1024 * 1024) {
         alert("File vượt quá 5MB, vui lòng chọn file nhỏ hơn.");
         return;
       }
-
-      if (name === "beforeImg") {
-        setBeforeImg(file);
-      } else if (name === "afterImg") {
-        setAfterImg(file);
-      } else if (name === "avatar") {
-        setFormData({ ...formData, avatar: URL.createObjectURL(file) });
-        setAvatarImg(file);
+      if (name === "img_person_one") {
+        setImgPersonOneFile(file);
+        setFormData((prev) => ({ ...prev, img_person_one: file }));
       }
-
-      setFormData({ ...formData, [name]: URL.createObjectURL(file) });
+      if (name === "img_person_two") {
+        setImgPersonTwoFile(file);
+        setFormData((prev) => ({ ...prev, img_person_two: file }));
+      }
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
+
+    console.log('handleChange', formData)
   };
 
+  // Upload image (no auth)
   const uploadImage = async (file) => {
     const data = new FormData();
     data.append("image", file);
-    const res = await axios.post(`${VARIABLE.url}/upload`, data, {
-      headers: {
-        x_authorization: `${token}`,
-      },
-    });
-
+    const res = await axios.post(`${VARIABLE.url}/upload`, data);
     return res.data.url;
-  };
-
-  const updateProfile = async (updatedData) => {
-    await axios.put(`${VARIABLE.url}/user/edit`, updatedData, {
-      headers: {
-        x_authorization: `${token}`,
-      },
-    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log({ formData })
+
     try {
-      let beforeImageUrl = formData.beforeImg;
-      let afterImageUrl = formData.afterImg;
-      let avatarImageUrl = formData.avatarImg;
-      if (beforeImg) {
-        beforeImageUrl = await uploadImage(beforeImg);
+      let imgPersonOneUrl = formData.img_person_one;
+      let imgPersonTwoUrl = formData.img_person_two;
+
+      // Only upload if local file
+      if (imgPersonOneFile) {
+        imgPersonOneUrl = await uploadImage(imgPersonOneFile);
       }
-      if (afterImg) {
-        afterImageUrl = await uploadImage(afterImg);
-      }
-      if (avatarImg) {
-        avatarImageUrl = await uploadImage(avatarImg);
+      if (imgPersonTwoFile) {
+        imgPersonTwoUrl = await uploadImage(imgPersonTwoFile);
       }
 
-      const updatedData = {
-        ...formData,
-        beforeImg: beforeImageUrl,
-        afterImg: afterImageUrl,
-        avatar: avatarImageUrl,
+      // Dữ liệu đúng chuẩn CardLove, thêm day_loved
+      const newCard = {
+        person_one: formData.person_one,
+        person_two: formData.person_two,
+        img_person_one: imgPersonOneUrl,
+        img_person_two: imgPersonTwoUrl,
+        start_date: formData.start_date,
+        url_youtube: formData.url_youtube,
+        day_loved: formData.day_loved,
       };
 
-      await axios.put(`${VARIABLE.url}/user/edit`, updatedData, {
-        headers: {
-          x_authorization: `${token}`,
-        },
-      });
+      console.log({ newCard })
 
-      alert("Cập nhật hồ sơ thành công!");
-      navigate("/profile");
+      const response = await axios.post(`${VARIABLE.url}/card`, newCard);
+
+      alert("Tạo card thành công!");
+      navigate(`/card/${response.data.data._id}`);
     } catch (err) {
       console.error(err);
-      alert("Cập nhật thất bại");
+      alert("Tạo card thất bại");
     }
   };
 
-  if (!formData) return <div>Đang tải dữ liệu...</div>;
+  // Tính số ngày yêu dựa vào start_date
+  const calcDaysLoved = (startDateStr) => {
+    if (!startDateStr) return 0;
+    // Chuyển "dd-MM-yyyy" thành Date
+    const parts = startDateStr.split("-");
+    if (parts.length !== 3) return 0;
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+    const startDate = new Date(year, month, day);
+    const today = new Date();
+    const diff = Math.floor(
+      (today.setHours(0,0,0,0) - startDate.setHours(0,0,0,0)) / 86400000
+    );
+    return diff >= 0 ? diff : 0;
+  };
 
   return (
     <div className="container my-5">
-      <div className="card shadow rounded-4 p-4">
-
+      <div className="card shadow rounded-4 p-4" id="card-love">
         <div className="row ">
-          <img src={logo} className="col-4 justify-center mx-auto mb-5" />
-
+          <img src={logo} className="col-4 justify-center mx-auto mb-5" alt="logo" />
         </div>
-
-
         <form onSubmit={handleSubmit}>
           {/* Thông tin cá nhân */}
           <div className="row">
-
             <div className="row">
               <div className="col-3">
                 <div className="text-center mb-4">
-                  <label htmlFor="avatarUpload" style={{ cursor: "pointer" }}>
+                  <label htmlFor="img_person_one" style={{ cursor: "pointer" }}>
                     <img
-                      src={formData.avatar || "https://via.placeholder.com/120"}
-                      alt="Avatar"
+                      src={
+                        imgPersonOneFile
+                          ? URL.createObjectURL(imgPersonOneFile)
+                          : (formData.img_person_one && typeof formData.img_person_one === "string")
+                            ? formData.img_person_one
+                            : "https://via.placeholder.com/120"
+                      }
+                      alt="img_person_one"
                       className="rounded-circle shadow"
                       style={{
                         width: "120px",
@@ -138,27 +171,50 @@ const EditProfile = () => {
                   </label>
                   <input
                     type="file"
-                    id="avatarUpload"
-                    name="avatar"
+                    id="img_person_one"
+                    name="img_person_one"
                     accept="image/*"
                     style={{ display: "none" }}
                     onChange={handleChange}
                   />
-                  <div className="mt-2 text-muted">Avatar</div>
+                  <input
+                    type="text"
+                    className="form-control mt-4 love-input"
+                    name="person_one"
+                    value={formData.person_one}
+                    placeholder="Nhập tên bạn"
+                    onChange={handleChange}
+                    autoComplete="off"
+                  />
                 </div>
               </div>
               <div className="col-6">
-                <div class="days-count">
-                  <p id="count-date">1015</p>
-                  <p>Days</p>
-                </div>
+                {/* Truyền callback nhận ngày và số ngày yêu từ LoveDaysPicker */}
+                <LoveDaysPicker
+                  onDateChange={(date) => {
+                    // Tính daysLoved ở đây
+                    const daysLoved = calcDaysLoved(date);
+                    setFormData((prev) => ({
+                      ...prev,
+                      start_date: date,
+                      day_loved: daysLoved,
+                    }));
+                  }}
+                />
+    
               </div>
               <div className="col-3">
                 <div className="text-center mb-4">
-                  <label htmlFor="avatarUpload" style={{ cursor: "pointer" }}>
+                  <label htmlFor="img_person_two" style={{ cursor: "pointer" }}>
                     <img
-                      src={formData.avatar || "https://via.placeholder.com/120"}
-                      alt="Avatar"
+                      src={
+                        imgPersonTwoFile
+                          ? URL.createObjectURL(imgPersonTwoFile)
+                          : (formData.img_person_two && typeof formData.img_person_two === "string")
+                            ? formData.img_person_two
+                            : "https://via.placeholder.com/120"
+                      }
+                      alt="img_person_two"
                       className="rounded-circle shadow"
                       style={{
                         width: "120px",
@@ -169,147 +225,38 @@ const EditProfile = () => {
                   </label>
                   <input
                     type="file"
-                    id="avatarUpload"
-                    name="avatar"
+                    id="img_person_two"
+                    name="img_person_two"
                     accept="image/*"
                     style={{ display: "none" }}
                     onChange={handleChange}
                   />
-                  <div className="mt-2 text-muted">Avatar</div>
+                  <input
+                    type="text"
+                    className="form-control mt-4  love-input"
+                    name="person_two"
+                    value={formData.person_two}
+                    placeholder="Nhập tên người ấy"
+                    onChange={handleChange}
+                    autoComplete="off"
+                  />
                 </div>
               </div>
-
             </div>
-
-            <div className="col-md-6 mb-3">
-              <label className="form-label">Họ tên</label>
-              <input
-                type="text"
-                className="form-control"
-                name="fullname"
-                value={formData.fullname || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3 mb-3">
-              <label className="form-label">Tuổi</label>
-              <input
-                type="number"
-                className="form-control"
-                name="age"
-                value={formData.age || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3 mb-3">
-              <label className="form-label">Chiều cao (cm)</label>
-              <input
-                type="text"
-                className="form-control"
-                name="height"
-                value={formData.height || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* Thông tin cân nặng */}
-          <div className="row">
-            <div className="col-md-3 mb-3">
-              <label className="form-label">Cân nặng trước (kg)</label>
-              <input
-                type="text"
-                className="form-control"
-                name="weightBefore"
-                value={formData.weightBefore || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3 mb-3">
-              <label className="form-label">Cân nặng hiện tại (kg)</label>
-              <input
-                type="text"
-                className="form-control"
-                name="weightAfter"
-                value={formData.weightAfter || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3 mb-3">
-              <label className="form-label">Chỉ số BMI</label>
-              <input
-                type="text"
-                className="form-control"
-                name="bmi"
-                value={formData.bmi || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3 mb-3">
-              <label className="form-label">Thời gian thay đổi</label>
-              <input
-                type="text"
-                className="form-control"
-                name="duration"
-                value={formData.duration || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* Câu chuyện */}
-          <div className="mb-3">
-            <label className="form-label">Câu chuyện thay đổi</label>
-            <textarea
-              className="form-control"
-              name="story"
-              rows="4"
-              value={formData.story || ""}
-              onChange={handleChange}
-            ></textarea>
-          </div>
-
-          {/* Ảnh */}
-          <div className="row mb-4">
-            <div className="col-md-6 text-center">
-              <label className="form-label">Ảnh trước</label>
-              <input
-                type="file"
-                className="form-control mb-2"
-                name="beforeImg"
-                accept="image/*"
-                onChange={handleChange}
-              />
-              {formData.beforeImg && (
-                <img
-                  src={formData.beforeImg}
-                  alt="Trước"
-                  className="img-fluid rounded shadow"
+            <div className="row d-flex justify-content-center">
+              <div className="col-8">
+                <YouTubePreview
+                  value={formData.url_youtube}
+                  onChange={(val) => {
+                    setFormData((prev) => ({ ...prev, url_youtube: val }));
+                  }}
                 />
-              )}
-            </div>
-            <div className="col-md-6 text-center">
-              <label className="form-label">Ảnh sau</label>
-              <input
-                type="file"
-                className="form-control mb-2"
-                name="afterImg"
-                accept="image/*"
-                onChange={handleChange}
-              />
-              {formData.afterImg && (
-                <img
-                  src={formData.afterImg}
-                  alt="Sau"
-                  className="img-fluid rounded shadow"
-                />
-              )}
+              </div>
             </div>
           </div>
-
           <div className="text-center">
-            <button type="submit" className="btn btn-success px-5">
-              Lưu thay đổi
+            <button type="submit" className="btn btn-success px-5 mt-5">
+              Tạo card mới
             </button>
           </div>
         </form>
@@ -318,4 +265,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default CreateCard;

@@ -10,6 +10,7 @@ import Profile from "./Pages/Profile/Profile";
 import EditProfile from "./Pages/Profile/EditProfile";
 import Card from "./Pages/Card/Card"
 import EditCard from "./Pages/Card/EditCard"
+import CardList from "./Pages/Card/CardList"
 
 import { Routes, Route } from "react-router-dom";
 import Target from "./Pages/Target/Target";
@@ -24,11 +25,11 @@ function App() {
 
             <Route element={<ProtectedLayout />}>
               <Route path="/" element={<Profile />} />
-              <Route path="/card" element={<Card />} />
+              <Route path="/cards" element={<CardList />} />
+              <Route path="/card/:id" element={<Card />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/target" element={<Target />} />
               <Route path="/edit-profile" element={<EditProfile />} />
-              <Route path="/card" element={<Card/>} />
               <Route path="/edit-card" element={<EditCard/>} />
             </Route>
           </Routes>

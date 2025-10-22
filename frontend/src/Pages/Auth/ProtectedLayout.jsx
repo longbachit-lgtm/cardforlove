@@ -2,9 +2,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { VARIABLE } from "../../Data/variable";
 import { setUser } from "../../store/userSlice";
-import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 export default function ProtectedLayout() {
   const dispatch = useDispatch();
@@ -64,7 +62,7 @@ export default function ProtectedLayout() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div className="container mt-4">
         <Outlet />
       </div>

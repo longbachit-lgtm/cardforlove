@@ -28,7 +28,21 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 
 // HTTP logger
-// app.use(morgan('combined'));
+app.use(morgan('dev'));
+
+// Lightweight request logger (method, url, and small body preview)
+app.use((req, _res, next) => {
+  const bodyPreview = (() => {
+    try {
+      const str = JSON.stringify(req.body);
+      return str && str.length > 200 ? str.slice(0, 200) + '…' : str;
+    } catch (_) {
+      return undefined;
+    }
+  })();
+  console.log(`[REQ] ${req.method} ${req.originalUrl}`, bodyPreview ? `body=${bodyPreview}` : '');
+  next();
+});
 
 // Template engine
 app.engine(
@@ -46,6 +60,12 @@ app.set("views", path.join(__dirname, "resources", "views"));
 app.use("/uploads", express.static(path.join(__dirname, "./app/uploads")));
 // Routes init
 route(app);
+
+// Global error handler (logs errors to terminal)
+app.use((err, _req, res, _next) => {
+  console.error('[ERROR]', err);
+  res.status(err.status || 500).json({ message: 'Server error', error: err?.message });
+});
 
 app.listen(port, () =>
   console.log(`App listening at http://localhost:${port}`)

@@ -98,6 +98,15 @@ function Header() {
                 <li>
                   <Link
                     className="dropdown-item"
+                    to="/cards"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Danh sách Card
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="dropdown-item"
                     to="/target"
                     onClick={() => setDropdownOpen(false)}
                   >

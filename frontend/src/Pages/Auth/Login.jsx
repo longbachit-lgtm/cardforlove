@@ -30,7 +30,7 @@ function Login() {
         localStorage.setItem("accessToken", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         localStorage.setItem("userLogin", res.data.userLogin);
-        navigation("/profile");
+        navigation("/edit-card");
       }
     } catch (error) {
       console.error(error);
