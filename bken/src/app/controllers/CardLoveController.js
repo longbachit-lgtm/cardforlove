@@ -58,8 +58,7 @@ class CardLoveController {
                 img_person_one: req.body.img_person_one ?? null,
                 person_two: req.body.person_two,
                 img_person_two: req.body.img_person_two ?? null,
-                day_loved: req.body.day_loved ?? null,
-                date_loved: req.body.date_loved ?? null,
+                start_date: req.body.start_date ?? null,
                 url_youtube: req.body.url_youtube ?? null,
             };
 

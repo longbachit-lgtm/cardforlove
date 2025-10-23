@@ -9,8 +9,7 @@ const CardLove = new Schema({
   img_person_one: { type: String, required: true },
   person_two: { type: String, required: true },
   img_person_two: { type: String, required: true },
-  day_loved: { type: String, default: null },
-  start_date: { type: String, required: true },
+  start_date: { type: String,default: null  },
   url_youtube: { type: String, required: true }
 });
 
