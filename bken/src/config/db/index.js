@@ -8,6 +8,8 @@ async function connect() {
         const HOST = 'cluster0.rfu7diy.mongodb.net';
 
         const uri = `mongodb+srv://${encodeURIComponent(USER)}:${encodeURIComponent(PASS)}@${HOST}/?appName=Cluster0`;
+
+        console.log({uri})
         await mongoose.connect(uri, {
 
             useUnifiedTopology: true,
