@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 async function connect() {
     try {
 
-        const USER = 'longbachit_db_user';
-        const PASS = 'abcd@1234';                 // có ký tự @
-        const HOST = 'cluster0.rfu7diy.mongodb.net';
+        // const USER = 'longbachit_db_user';
+        // const PASS = 'abcd@1234';                 // có ký tự @
+        // const HOST = 'cluster0.rfu7diy.mongodb.net';
 
         const uri = `mongodb+srv://healthylife:!healthylife@cluster0.rnhlwmz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
