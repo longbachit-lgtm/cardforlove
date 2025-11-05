@@ -19,7 +19,7 @@ git add -A
 
 ## Commit thay đổi
 ```bash
-git commit -m "Mô tả thay đổi"
+git commit -m "Mô tả thay đổi sadas"
 ```
 
 ## Push lên remote
