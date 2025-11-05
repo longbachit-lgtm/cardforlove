@@ -191,14 +191,14 @@ const Index = () => {
       });
       return;
     }
-    if (!youtubeUrl.trim()) {
-      toast({
-        title: "Thiếu link YouTube",
-        description: "Vui lòng điền link YouTube.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // if (!youtubeUrl.trim()) {
+    //   toast({
+    //     title: "Thiếu link YouTube",
+    //     description: "Vui lòng điền link YouTube.",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
 
     setSaving(true);
     try {
@@ -208,7 +208,7 @@ const Index = () => {
         person_two: personTwo || "Anh",
         img_person_two: uploadedImage2,
         start_date: format(startDate, "yyyy-MM-dd"),
-        url_youtube: youtubeUrl || "",
+        ...(youtubeUrl.trim() && { url_youtube: youtubeUrl }),
         message: message, // Truyền thông điệp người dùng nhập từ field bên dưới
       };
 

@@ -10,7 +10,7 @@ const CardLove = new Schema({
   person_two: { type: String, required: true },
   img_person_two: { type: String, required: true },
   start_date: { type: String, default: null },
-  url_youtube: { type: String, required: true },
+  url_youtube: { type: String,  default: null },
   message: { type: String },
 }, {
   timestamps: true // Tự động thêm createdAt và updatedAt

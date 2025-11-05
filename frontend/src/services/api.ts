@@ -27,7 +27,7 @@ export interface CardLoveData {
   person_two: string;
   img_person_two: string;
   start_date: string;
-  url_youtube: string;
+  url_youtube?: string;
   message?: string;
 }
 
