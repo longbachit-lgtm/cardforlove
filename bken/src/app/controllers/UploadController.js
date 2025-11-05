@@ -1,3 +1,5 @@
+const { url } = require("../sub/variable");
+
 class UploadController {
   uploadImage = (req, res) => {
     // const file = req.file;
@@ -5,7 +7,7 @@ class UploadController {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const fileUrl = `${url}/uploads/${req.file.filename}`;
     return res.status(200).json({ url: fileUrl });
   };
 }

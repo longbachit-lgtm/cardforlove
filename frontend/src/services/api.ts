@@ -1,6 +1,6 @@
 import { log } from "console";
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://cardforlove-production.up.railway.app';
 
 // Upload API
 export const uploadImage = async (file: File): Promise<string> => {
