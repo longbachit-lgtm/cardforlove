@@ -29,6 +29,7 @@ export interface CardLoveData {
   start_date: string;
   url_youtube?: string;
   message?: string;
+  message_color?: string;
 }
 
 export const createCard = async (cardData: CardLoveData) => {

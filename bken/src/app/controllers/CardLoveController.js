@@ -63,6 +63,7 @@ class CardLoveController {
                 start_date: req.body.start_date ?? null,
                 url_youtube: req.body.url_youtube ?? null,
                 message: req.body.message ?? null,
+                message_color: req.body.message_color ?? "gradient-romantic",
                 // Nếu có các field mới, bổ sung tại đây
             };
 
@@ -86,6 +87,7 @@ class CardLoveController {
                 ...(req.body.start_date !== undefined && { start_date: req.body.start_date }),
                 ...(req.body.url_youtube !== undefined && { url_youtube: req.body.url_youtube }),
                 ...(req.body.message !== undefined && { message: req.body.message }),
+                ...(req.body.message_color !== undefined && { message_color: req.body.message_color }),
                 // Nếu model có field mới, update thêm ở đây
             };
 

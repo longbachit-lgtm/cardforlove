@@ -1,0 +1,18 @@
+
+.title-card-love {
+  display: flex;
+  margin: 35px 0;
+  font-size: 2.3rem;
+  justify-content: center;
+}
+
+.title-card-love .icon {
+  position: relative;
+  top: -2px;
+  font-size: 33px;
+}
+
+
+.title-letter {
+    font-size: 2.9rem;
+}

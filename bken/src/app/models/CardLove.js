@@ -12,6 +12,7 @@ const CardLove = new Schema({
   start_date: { type: String, default: null },
   url_youtube: { type: String,  default: null },
   message: { type: String },
+  message_color: { type: String, default: "gradient-romantic" },
 }, {
   timestamps: true // Tự động thêm createdAt và updatedAt
 });

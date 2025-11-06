@@ -23,6 +23,7 @@ interface CardData {
   start_date: string;
   url_youtube: string;
   message: string;
+  message_color?: string;
   createdAt: string;
 }
 
@@ -391,7 +392,26 @@ const CardDisplay = () => {
             {/* Love Message */}
             {cardData.message && (
               <div className="text-center mb-8 p-6 bg-gradient-to-r from-pink-50 to-red-50 rounded-lg border border-primary/20">
-                <p className="text-lg font-semibold italic whitespace-pre-line break-words bg-gradient-romantic bg-clip-text text-transparent">
+                <p
+                  className={cn(
+                    "text-lg font-semibold italic whitespace-pre-line break-words",
+                    cardData.message_color === "gradient-romantic" || !cardData.message_color
+                      ? "bg-gradient-romantic bg-clip-text text-transparent"
+                      : ""
+                  )}
+                  style={
+                    cardData.message_color === "gradient-romantic" || !cardData.message_color
+                      ? {
+                          textShadow:
+                            "0 1px 6px hsl(340, 82%, 80%, 0.14), 0 1px 0 hsl(280, 70%, 60%,0.13)",
+                        }
+                      : {
+                          color: cardData.message_color,
+                          textShadow:
+                            "0 1.5px 4px rgba(0,0,0,0.06),0 1px 0 rgba(0,0,0,0.02)",
+                        }
+                  }
+                >
                   "{cardData.message}"
                 </p>
               </div>

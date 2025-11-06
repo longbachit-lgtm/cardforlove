@@ -79,9 +79,9 @@ const Index = () => {
 
     // Thêm dấu "/" tự động khi nhập đủ số
     if (val.length > 2 && val.length <= 4) {
-      val = `${val.slice(0,2)}/${val.slice(2,4)}`;
+      val = `${val.slice(0, 2)}/${val.slice(2, 4)}`;
     } else if (val.length > 4) {
-      val = `${val.slice(0,2)}/${val.slice(2,4)}/${val.slice(4,8)}`;
+      val = `${val.slice(0, 2)}/${val.slice(2, 4)}/${val.slice(4, 8)}`;
     }
 
     setDateInputValue(val);
@@ -117,7 +117,7 @@ const Index = () => {
     setUploading(true);
     try {
       const { dataURL, file: fixedFile } = await fixImageOrientation(file);
-      
+
       // Hiển thị ảnh đã được xoay đúng
       setImage(dataURL);
 
@@ -209,6 +209,7 @@ const Index = () => {
         start_date: format(startDate, "yyyy-MM-dd"),
         ...(youtubeUrl.trim() && { url_youtube: youtubeUrl }),
         message: message, // Truyền thông điệp người dùng nhập từ field bên dưới
+        message_color: messageColor, // Truyền màu message đã chọn
       };
 
       const result = await createCard(cardData);
@@ -261,7 +262,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-12 max-w-6xl relative z-10">
         {/* Header */}
         <div className="text-center mb-12 animate-in fade-in slide-in-from-top duration-700">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-romantic bg-clip-text text-transparent">
+          <h1 className="title-letter font-bold mb-4 bg-gradient-romantic bg-clip-text text-transparent">
             Thiệp Valentine
           </h1>
           <p className="text-lg text-muted-foreground">
@@ -527,12 +528,16 @@ const Index = () => {
         {/* Preview Card */}
         {shouldShowCard && (
           <Card className="p-8 gradient-card shadow-romantic backdrop-blur-sm border-primary/20 animate-in fade-in slide-in-from-bottom duration-700">
-            <h2 className="text-3xl font-semibold mt-12 mb-6 text-center bg-gradient-romantic bg-clip-text text-transparent">
-              Thiệp của chúng ta 💝
-            </h2>
-
+            <div className="title-card-love" >
+              <div className="  font-bold mb-4 bg-gradient-romantic bg-clip-text text-transparent" style={{ marginRight: '5px', textAlign: "center" }}>
+                <span style={{ color: "#ff3399", background: "none", WebkitBackgroundClip: "unset", WebkitTextFillColor: "unset" }}>
+                  Thiệp Valentine của chúng ta <span style={{ color: "#ff6699", background: "none" }}>💝</span>
+                </span>
+              </div>
+            </div>
+ 
             <div className="space-y-6 mt-12">
-        
+
               {/* Images Preview */}
               {(image1 || image2 || personOne.trim() || personTwo.trim()) && (
                 <div
@@ -558,7 +563,7 @@ const Index = () => {
                         )}
                       </div>
                       <div className="mt-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium min-w-[80px] text-center shadow-soft">
-                        {personOne.trim() ? personOne : "Em"} 
+                        {personOne.trim() ? personOne : "Em"}
                       </div>
                     </div>
                   )}
@@ -638,14 +643,14 @@ const Index = () => {
                     style={
                       messageColor === "gradient-romantic"
                         ? {
-                            textShadow:
-                              "0 1px 6px hsl(340, 82%, 80%, 0.14), 0 1px 0 hsl(280, 70%, 60%,0.13)",
-                          }
+                          textShadow:
+                            "0 1px 6px hsl(340, 82%, 80%, 0.14), 0 1px 0 hsl(280, 70%, 60%,0.13)",
+                        }
                         : {
-                            color: messageColor,
-                            textShadow:
-                              "0 1.5px 4px rgba(0,0,0,0.06),0 1px 0 rgba(0,0,0,0.02)",
-                          }
+                          color: messageColor,
+                          textShadow:
+                            "0 1.5px 4px rgba(0,0,0,0.06),0 1px 0 rgba(0,0,0,0.02)",
+                        }
                     }
                   >
                     {message}
@@ -681,7 +686,7 @@ const Index = () => {
                 onClick={handleSaveCard}
                 disabled={
                   saving ||
-                  uploading 
+                  uploading
                   // ||
                   // !uploadedImage1 ||
                   // !uploadedImage2 ||
