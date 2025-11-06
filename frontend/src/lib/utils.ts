@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { parse } from "exifr";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -36,9 +37,8 @@ export async function fixImageOrientation(file: File): Promise<{ dataURL: string
         
         img.onload = async () => {
           try {
-            // Import exifr dynamically
-            const exifr = await import('exifr');
-            const exifData = await exifr.parse(file);
+            // Parse EXIF data từ file
+            const exifData = await parse(file);
             
             const orientation = exifData?.Orientation || 1;
             
