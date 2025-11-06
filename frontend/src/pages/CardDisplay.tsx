@@ -300,21 +300,6 @@ const CardDisplay = () => {
                         font-size: 33px;
                         }
 
-                      @media (max-width: 443px) {
-                      .title-card-love{
-                    display:flex;
-                    line-height: 15px;
-                    font-size: 2.2rem;
-                    line-height: 6.5rem;
-                    }
-
-                    .title-card-love .icon{
-                        position: relative;
-                        top: -2px;
-                        font-size: 33px;
-                        }
-
-                }
                   `}
               </style>
             </div>
