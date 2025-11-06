@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Card } from "@/components/ui/card";
 import { format, differenceInDays } from "date-fns";
 import { vi } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn, fixImageOrientation } from "@/lib/utils";
 import valentineBg from "@/assets/valentine-bg.jpg";
 import { uploadImage, createCard, type CardLoveData } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
@@ -113,17 +113,16 @@ const Index = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Preview image locally first
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-
-    // Upload to server
+    // Xử lý EXIF orientation để xoay ảnh đúng hướng
     setUploading(true);
     try {
-      const uploadedUrl = await uploadImage(file);
+      const { dataURL, file: fixedFile } = await fixImageOrientation(file);
+      
+      // Hiển thị ảnh đã được xoay đúng
+      setImage(dataURL);
+
+      // Upload ảnh đã được xoay đúng lên server
+      const uploadedUrl = await uploadImage(fixedFile);
       setUploadedImage(uploadedUrl);
       toast({
         title: "Tải ảnh thành công!",
